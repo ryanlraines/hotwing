@@ -142,8 +142,8 @@ resource "kubernetes_service" "hotwing-svc" {
       test = "hotwing"
     }
     port {
-      port        = 3000
-      target_port = 3000
+      port        = 80
+      target_port = 80
     }
 
     type = "LoadBalancer"
