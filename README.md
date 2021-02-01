@@ -1,15 +1,22 @@
 # Summary
-//TODO
+Welcome to Hotwing! This Express/Node js app hosts a REST API. We're going to deploy hotwing to an Amazon EKS Cluster using terraform automation. 
 
-# Requirements
-//TODO
+# Prerequisites
+* [Terraform](https://www.terraform.io/downloads.html)
+* [AWS CLI](https://aws.amazon.com/cli/)
+* [Docker](https://www.docker.com/products/docker-desktop)
 
-# Local App Start up
+
+# Run Hotwing Locally
 1. `docker build .`
-
 1. `docker run -p 3000:3000 <imageid>`
 
-# Terraform for Windows Users
+# Run Hotwing in AWS EKS cluster
+1. [Authorize AWS CLI for AWS Account](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+1. run `terraform init`
+1. run `terraform apply`
+
+## Note for Terraform users on Windows
 https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/faq.md#deploying-from-windows-binsh-file-does-not-exist
 
 Example mod to `.terraform\modules\eks\variables.tf`:
