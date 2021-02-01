@@ -3,18 +3,21 @@ Welcome to Hotwing! This Express/Node js app hosts a REST API. We're going to de
 
 # Prerequisites
 * [Terraform](https://www.terraform.io/downloads.html)
+* [AWS Account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html?nc2=h_ct&src=header_signup)
 * [AWS CLI](https://aws.amazon.com/cli/)
-* [Docker](https://www.docker.com/products/docker-desktop)
+* [Docker](https://www.docker.com/products/docker-desktop) _for local testing_
 
 
 # Run Hotwing Locally
 1. `docker build .`
 1. `docker run -p 3000:3000 <imageid>`
 
-# Run Hotwing in AWS EKS cluster
+# Run Hotwing in an AWS EKS cluster
 1. [Authorize AWS CLI for AWS Account](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
 1. run `terraform init`
 1. run `terraform apply`
+1. run  `aws eks --region [region] update-kubeconfig --name [clustername]`
+1. run `kubectl get svc` Notice the EXTERNAL-IP value.  Navigate to that address in your browser.
 
 ## Note for Terraform users on Windows
 https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/faq.md#deploying-from-windows-binsh-file-does-not-exist
