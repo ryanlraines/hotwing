@@ -1,3 +1,4 @@
-terraform*
-.terraform*
 kubeconfig*
+terraform/.terraform/*
+terraform/terraform.*
+terraform/.terraform.*
