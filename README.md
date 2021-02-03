@@ -47,6 +47,20 @@ If you're running Terraform from a windows host, there will be some edits to the
 
 # Hotwing Cleanup
 If you're ready to cleanup your environment, run this command.  Terraform will destroy all the resources it's managing.
+
 1. run `terraform destroy`
 
 # So how is all this working?
+
+# Testing
+The easiest way to test hotwing is to naviate to the external-ip.You should see something like this: 
+
+![Sample Browser](assets\sample_browser.png)
+
+But suppose you had many API endpoints to test, or you wanted to test API performance; manually testing in the browser isn't optimal. The easiest automated testing could be accomplished with cURL.  
+
+Example:
+`curl af5177e41ef1f4b42841138742cebce8-1348202060.us-east-1.elb.amazonaws.com`
+
+![Sample cURL](assets\curl.gif)
+
