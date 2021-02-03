@@ -14,15 +14,15 @@ Want to run hotwing locally in a docker container? This is espescially useful fo
 1. `docker run -p 80:80 <imageid>`
 
 # Hotwing in an AWS EKS cluster
-1. Lets move to the terraform directory, run `cd ./terraform`
+1. Lets move to the terraform directory, `cd ./terraform`
 1. [Authorize AWS CLI for AWS Account](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
 After you've installed AWS CLI, lets connect it to your AWS account where you wish to deploy hotwing. 
 
-1. run `terraform init`
+1. `terraform init`
     * Windows users see notes below
-1. run `terraform apply`
-1. run  `aws eks --region us-east-1 update-kubeconfig --name hotwing-cluster`
-1. run `kubectl get svc` Notice the EXTERNAL-IP value.  Navigate to that address in your browser.
+1. `terraform apply`
+1. `aws eks --region us-east-1 update-kubeconfig --name hotwing-cluster`
+1. `kubectl get svc` Notice the EXTERNAL-IP value.  Navigate to that address in your browser.
 
 ## Note for Terraform users on Windows
 If you're running Terraform from a windows host, there will be some edits to the module files required. 
@@ -48,9 +48,10 @@ If you're running Terraform from a windows host, there will be some edits to the
 # Hotwing Cleanup
 If you're ready to cleanup your environment, run this command.  Terraform will destroy all the resources it's managing.
 
-1. run `terraform destroy`
+1. `terraform destroy`
 
 # So how is all this working?
+//TODO
 
 # Testing
 The easiest way to test hotwing is to naviate to the external-ip.You should see something like this: 
