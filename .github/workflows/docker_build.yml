@@ -1,14 +1,14 @@
-name: hotwing build
+name: image build
 
-# on:
-#   push:
-#     branches:
-#       - main
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'ops/**'
+      - 'src/**'
 
 env:
-  ECR_REGISTRY: 445850313110.dkr.ecr.us-east-2.amazonaws.com/ryanlraines/hotwing
+  ECR_REGISTRY: 445850313110.dkr.ecr.us-east-2.amazonaws.com
   AWS_REGION: us-east-2
   IMAGE_NAME: ${{ github.repository }}
 
@@ -17,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -33,7 +33,7 @@ jobs:
       - name: Build and Tag Docker Image
         id: build-image
         run: |
-          docker build . -f ops/docker/dockerfile -t $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }} .
+          docker build . -f ops/docker/dockerfile -t $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}
 
       - name: Push Docker Image to Amazon ECR
         id: push-image
