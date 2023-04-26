@@ -1,151 +1,98 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 provider "aws" {
-  region  = var.region
+  region = var.region
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
+data "aws_availability_zones" "available" {}
+
+locals {
+  cluster_name = "dev-eks"
 }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
 
-data "aws_availability_zones" "available" {
-}
-
-resource "aws_security_group" "worker_group_mgmt_one" {
-  name_prefix = "worker_group_mgmt_one"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      "10.0.0.0/8",
-    ]
-  }
-}
-
-resource "aws_security_group" "all_worker_mgmt" {
-  name_prefix = "all_worker_management"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      "10.0.0.0/8",
-      "172.16.0.0/12",
-      "192.168.0.0/16",
-    ]
-  }
-}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
+  version = "3.19.0"
 
-  name                 = "hotwing-vpc"
-  cidr                 = "10.0.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
-  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  name = "dev-vpc"
+
+  cidr = "10.0.0.0/16"
+  azs  = slice(data.aws_availability_zones.available.names, 0, 3)
+
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = "1"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = 1
   }
 }
 
 module "eks" {
-  source       = "terraform-aws-modules/eks/aws"
-  cluster_name    = var.cluster_name
-  cluster_version = "1.18"
-  subnets         = module.vpc.private_subnets
-  cluster_create_timeout = "1h"
-  cluster_endpoint_private_access = true 
+  source  = "terraform-aws-modules/eks/aws"
+  version = "19.5.1"
 
-  vpc_id = module.vpc.vpc_id
+  cluster_name    = local.cluster_name
+  cluster_version = "1.24"
 
-  worker_groups = [
-    {
-      name                          = "worker-group-1"
-      instance_type                 = "t2.small"
-      additional_userdata           = "echo foo bar"
-      asg_desired_capacity          = 1
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
-    },
-  ]
+  vpc_id                         = module.vpc.vpc_id
+  subnet_ids                     = module.vpc.private_subnets
+  cluster_endpoint_public_access = true
 
-  worker_additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
-}
+  eks_managed_node_group_defaults = {
+    ami_type = "AL2_x86_64"
 
-
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-}
-
-resource "kubernetes_deployment" "hotwing_deploy" {
-  metadata {
-    name = "hotwing-deploy"
-    labels = {
-      test = "hotwing"
-    }
   }
 
-  spec {
-    replicas = 1
+  eks_managed_node_groups = {
+    one = {
+      name = "node-group-1"
 
-    selector {
-      match_labels = {
-        test = "hotwing"
-      }
-    }
+      instance_types = ["t3.small"]
 
-    template {
-      metadata {
-        labels = {
-          test = "hotwing"
-        }
-      }
-
-      spec {
-        container {
-          image = "ryanlraines/hotwing:latest"
-          name  = "hotwing"
-        }
-      }
+      min_size     = 1
+      max_size     = 1
+      desired_size = 1
     }
   }
 }
+    
 
-resource "kubernetes_service" "hotwing-svc" {
-  metadata {
-    name = "hotwing-svc"
-  }
-  spec {
-    selector = {
-      test = "hotwing"
-    }
-    port {
-      port        = 80
-      target_port = 80
-    }
+# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
+data "aws_iam_policy" "ebs_csi_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
 
-    type = "LoadBalancer"
+module "irsa-ebs-csi" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "4.7.0"
+
+  create_role                   = true
+  role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
+  provider_url                  = module.eks.oidc_provider
+  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+}
+
+resource "aws_eks_addon" "ebs-csi" {
+  cluster_name             = module.eks.cluster_name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = "v1.5.2-eksbuild.1"
+  service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+  tags = {
+    "eks_addon" = "ebs-csi"
+    "terraform" = "true"
   }
 }
