@@ -10,8 +10,8 @@ Welcome to Hotwing! This Express/Node js app hosts a REST API. We're going to de
 
 # Hotwing Locally
 Want to run hotwing locally in a docker container? This is espescially useful for rapid development.
-1. `docker build .`
-1. `docker run -p 80:80 <imageid>`
+1. `docker build . -f ops/docker/dockerfile -t hotwing:dev`
+1. `docker run -p 80:80 hotwing:dev`
 
 # Hotwing in an AWS EKS cluster
 1. Lets move to the terraform directory, `cd ./terraform`
