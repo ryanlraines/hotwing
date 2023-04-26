@@ -52,3 +52,5 @@ jobs:
         kubectl config use-context ${{ env.EKS_CLUSTER_NAME }}
         helm upgrade --install hotwing ops/helm/hotwing -f custom_values/dev_values.yml
 
+#
+
