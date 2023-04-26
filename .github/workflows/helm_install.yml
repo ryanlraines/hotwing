@@ -44,13 +44,10 @@ jobs:
 
     - name: Update kubeconfig
       run: |
-        aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }}
+        aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region us-east-1
+
 
         
     - name: Deploy Helm chart
       run: |
-        kubectl config use-context ${{ env.EKS_CLUSTER_NAME }}
-        helm upgrade --install hotwing ops/helm/hotwing -f custom_values/dev_values.yml
-
-#
-
+        helm upgrade --install hotwing ops/helm/hotwing -f ops/helm/hotwing/custom_values/dev_values.yml
