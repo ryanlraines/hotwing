@@ -46,6 +46,7 @@ jobs:
       run: |
         aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region us-east-1
 
+
         
     - name: Deploy Helm chart
       run: |
