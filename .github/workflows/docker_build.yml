@@ -1,11 +1,11 @@
-name: hotwing build
+name: image build
 
-# on:
-#   push:
-#     branches:
-#       - main
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'ops/**'
+      - 'src/**'
 
 env:
   ECR_REGISTRY: 445850313110.dkr.ecr.us-east-2.amazonaws.com
