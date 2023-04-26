@@ -14,7 +14,7 @@ Want to run hotwing locally in a docker container? This is espescially useful fo
 1. `docker run -p 80:80 hotwing:dev`
 
 # Deploy to existing cluster
-1. `helm upgrade --install hotwing ops/helm/hotwing -f ops/helm/hotwing/custom_values/dev_values.yml`
+1. `helm upgrade --install hotwing ops/helm/hotwing`
 1. `kubectl port-forward services/hotwing 8080:80 -n default`
 1. [localhost:8080](http://localhost:8080)
 
