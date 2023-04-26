@@ -13,16 +13,11 @@ Want to run hotwing locally in a docker container? This is espescially useful fo
 1. `docker build . -f ops/docker/dockerfile -t hotwing:dev`
 1. `docker run -p 80:80 hotwing:dev`
 
-# Hotwing in an AWS EKS cluster
-1. Lets move to the terraform directory, `cd ./terraform`
-1. [Authorize AWS CLI for AWS Account](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
-After you've installed AWS CLI, lets connect it to your AWS account where you wish to deploy hotwing. 
+# Deploy to existing cluster
+1. `helm upgrade --install hotwing ops/helm/hotwing -f ops/helm/hotwing/custom_values/dev_values.yml`
+1. `kubectl port-forward services/hotwing 8080:80 -n default`
+1. [localhost:8080](http://localhost:8080)
 
-1. `terraform init`
-    * Windows users see notes below
-1. `terraform apply`
-1. `aws eks --region us-east-1 update-kubeconfig --name hotwing-cluster`
-1. `kubectl get svc` Notice the EXTERNAL-IP value.  Navigate to that address in your browser.
 
 ## Note for Terraform users on Windows
 If you're running Terraform from a windows host, there will be some edits to the module files required. 
