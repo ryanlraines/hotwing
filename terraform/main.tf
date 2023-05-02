@@ -1,16 +1,6 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
-terraform {
-  backend "s3" {
-    bucket         = var.s3_backend
-    key            = "terraform.tfstate"
-    region         = var.region
-    dynamodb_table = var.state_table
-  }
-}
-
-
 provider "aws" {
   region = var.region
 }
