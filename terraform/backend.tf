@@ -3,6 +3,6 @@ terraform {
     bucket         = "hotwing"
     key            = "state/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "tf_state"
+    dynamodb_table = "hotwing_lock"
   }
 }
