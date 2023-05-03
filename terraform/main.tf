@@ -8,7 +8,7 @@ provider "aws" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_name = "dev-eks"
+  cluster_name = "dev"
 }
 
 
