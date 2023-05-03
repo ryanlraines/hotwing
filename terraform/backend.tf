@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket         = "general-raines"
+    bucket         = "hotwing"
     key            = "state/terraform.tfstate"
-    region         = "us-east-2"
+    region         = "us-east-1"
     dynamodb_table = "tf_state"
   }
 }
