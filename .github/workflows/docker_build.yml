@@ -33,11 +33,9 @@ jobs:
       - name: Build and Tag Docker Image
         id: build-image
         run: |
-          echo "docker build . -f ops/docker/dockerfile -t $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}"
           docker build . -f ops/docker/dockerfile -t $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}
 
       - name: Push Docker Image to Amazon ECR
         id: push-image
         run: |
-          echo "docker push $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}"
           docker push $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}
