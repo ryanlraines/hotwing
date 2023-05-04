@@ -24,9 +24,12 @@ jobs:
         docker pull $ECR_REGISTRY/$IMAGE_NAME:dev
         docker tag $ECR_REGISTRY/$IMAGE_NAME:dev $ECR_REGISTRY/$IMAGE_NAME:qa
         docker push $ECR_REGISTRY/$IMAGE_NAME:qa
-
-    - name: Helm Install 
-      uses: file://.github/workflows/helm_install_template.yml
+        
+    - name: Check out repository
+      uses: actions/checkout@v3   
+  
+    - name: Helm Install
+      uses: ./.github/workflows/helm_install_template.yml
       with:
         region: 'us-east-1'
         cluster_name: 'qa'
