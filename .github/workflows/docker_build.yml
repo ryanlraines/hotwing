@@ -8,8 +8,8 @@ on:
       - 'src/**'
 
 env:
-  ECR_REGISTRY: 445850313110.dkr.ecr.us-east-2.amazonaws.com
-  AWS_REGION: us-east-2
+  ECR_REGISTRY: 445850313110.dkr.ecr.us-east-1.amazonaws.com
+  AWS_REGION: us-east-1
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
