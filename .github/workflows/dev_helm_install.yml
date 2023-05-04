@@ -1,0 +1,15 @@
+name: Deploy Dev
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:        
+    - name: Helm Install
+      uses: file://.github/workflows/helm_install_template.yml
+      with:
+        region: 'us-east-1'
+        cluster_name: 'dev'
