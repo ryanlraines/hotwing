@@ -14,7 +14,7 @@ jobs:
       run: |
         pwd
         tree
-        ls -lash
+        ls -lash .github
 
     - name: Helm Install
       uses: ./.github/workflows/helm_install_template.yml
