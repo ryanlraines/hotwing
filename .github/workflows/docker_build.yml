@@ -34,8 +34,10 @@ jobs:
         id: build-image
         run: |
           docker build . -f ops/docker/dockerfile -t $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}
+          docker -t $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }} $ECR_REGISTRY/$IMAGE_NAME:dev
 
       - name: Push Docker Image to Amazon ECR
         id: push-image
         run: |
           docker push $ECR_REGISTRY/$IMAGE_NAME:${{ github.sha }}
+          docker push $ECR_REGISTRY/$IMAGE_NAME:dev
