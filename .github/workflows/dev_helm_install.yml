@@ -5,11 +5,10 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   
 
-    steps:     
-    - name: Check out repository
-      uses: actions/checkout@v3  
+    steps:    
+    - uses: actions/checkout@v3  
       
     - name: debug
       run: |
@@ -18,7 +17,7 @@ jobs:
         ls -lash
 
     - name: Helm Install
-      uses: ryanlraines/hotwing/.github/workflows/helm_install_template.yml@main
+      uses: ./.github/workflows/helm_install_template.yml
       with:
         region: 'us-east-1'
         cluster_name: 'qa'
