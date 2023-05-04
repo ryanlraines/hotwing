@@ -2,16 +2,13 @@ name: Deploy hotwing chart to EKS
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'ops/helm/**'
 
 env:
-  AWS_REGION: us-east-2
+  AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  EKS_CLUSTER_NAME: dev-eks
+  EKS_CLUSTER_NAME: dev
 
 
 jobs:
@@ -44,7 +41,7 @@ jobs:
 
     - name: Update kubeconfig
       run: |
-        aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region us-east-1
+        aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
 
         
