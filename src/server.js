@@ -4,7 +4,7 @@ const port = 80
 
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({  "message": "Automate all the things!",  "timestamp": Date.now()}));
+  res.end(JSON.stringify({  "message": "Ryan",  "timestamp": Date.now()}));
 });
 
 app.listen(port, () => {
