@@ -1,35 +1,56 @@
-name: Deploy QA
+name: Deploy
 
 on:
   workflow_dispatch:
 
+env:
+  region: us-east-1
+  cluster-name: qa
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:        
-    - name: Configure AWS Credentials
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: 'us-east-1'
+        aws-region: ${{ env.region }}
+        
+    - name: Install kubectl
+      run: |
+        sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2 curl
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+        sudo apt-get update
+        sudo apt-get install -y kubectl
+        
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Docker Tag
-      id: docker-tag
+
+    - name: Tag QA
       run: |
-        docker pull $ECR_REGISTRY/$IMAGE_NAME:dev
-        docker tag $ECR_REGISTRY/$IMAGE_NAME:dev $ECR_REGISTRY/$IMAGE_NAME:qa
-        docker push $ECR_REGISTRY/$IMAGE_NAME:qa
+        docker tag $ECR_REGISTRY/$IMAGE_NAME:dev $ECR_REGISTRY/$IMAGE_NAME:${{ env.cluster-name }}
+        docker push $ECR_REGISTRY/$IMAGE_NAME:${{ env.cluster-name }}
+          
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --name ${{ env.cluster-name }} --region ${{ env.region }}
+
         
-    - name: Check out repository
-      uses: actions/checkout@v3   
-  
-    - name: Helm Install
-      uses: ryanlraines/Deploy@main
-      with:
-        region: 'us-east-1'
-        cluster_name: 'qa'
+    - name: Deploy Helm chart
+      run: |
+        helm upgrade --install hotwing ops/helm/hotwing -f ops/helm/hotwing/custom_values/${{ env.cluster-name }}_values.yml
+      
