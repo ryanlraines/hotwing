@@ -18,7 +18,7 @@ jobs:
         ls -lash
 
     - name: Helm Install
-      uses: .github/workflows/helm_install_template.yml
+      uses: ryanlraines/hotwing/.github/workflows/helm_install_template.yml@main
       with:
         region: 'us-east-1'
         cluster_name: 'qa'
