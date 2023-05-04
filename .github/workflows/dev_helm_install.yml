@@ -12,4 +12,7 @@ jobs:
       uses: actions/checkout@v3   
 
     - name: Helm Install
-      uses: .github/workflows/helm_install_template.yml
+      uses: ./.github/workflows/helm_install_template.yml
+      with:
+        region: 'us-east-1'
+        cluster_name: 'qa'
