@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: 445850313110.dkr.ecr.us-east-2.amazonaws.com/ryanlraines/hotwing
+  repository: 445850313110.dkr.ecr.us-east-1.amazonaws.com/ryanlraines/hotwing
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
